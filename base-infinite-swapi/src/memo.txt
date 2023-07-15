@@ -1,0 +1,28 @@
+useInfinityQuery와 useQuery의 차이점
+
+useQuery의 경우 react-query에서 가장 기본적으로 사용되는 hook이다.
+
+
+반환객체에서 반환되는 데이터의 형태가 다름
+
+useQuery에서는 데이터는 쿼리함수에서 반환되는 단순한 데이터
+
+하지만 useInfinityQuery에서 반환되는 객체는 데이터 페이지 객체의 배열 페이지(useQuery에서 반환하는 것과 같은 데이터들의 모음) 와 
+
+pageParams(각 페이지의 매개변수가 기록되어 있음) 두개의 파라미터를 지닌다
+
+pageParams는 자주 사용되지는 않는다.
+
+
+모든 쿼리는 페이지 배열에 고유한 요소를 가지고 페이지가 진행되면서 쿼리도 바뀐다.
+
+useInfinityQuery("keyWord" , ({pageParams = defaultUrl}) => fetchUrl(pageParams))
+
+getNextPageParam: (lastPage, allPage) => 다음 페이지로 가는 방식을 정의하는 함수 (마지막 페이지의 데이터 에서, 모든 페이지에 대한 데이터에서)
+
+fetchNextPage => 사용자가 더 많은 데이터를 호출할때 사용 ex) 스크린에서 데이터가 소진되는 시점
+
+hasNextPage => 마지막 쿼리의 데이터를 어떻게 사용할지 지시
+
+
+
