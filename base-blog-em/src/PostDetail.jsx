@@ -1,3 +1,5 @@
+import { useQuery, useMutation } from "react-query";
+
 async function fetchComments(postId) {
   const response = await fetch(
     `https://jsonplaceholder.typicode.com/comments?postId=${postId}`
@@ -23,19 +25,40 @@ async function updatePost(postId) {
 
 export function PostDetail({ post }) {
   // replace with useQuery
-  const data = [];
+  const { data, isLoading } = useQuery([`posts-detail`, post.id], () =>
+    fetchComments(post.id)
+  );
+
+  const deleteMutation = useMutation((postId) => deletePost(postId));
+
+  const updateMutation = useMutation((postId) => updatePost(postId));
 
   return (
     <>
       <h3 style={{ color: "blue" }}>{post.title}</h3>
-      <button>Delete</button> <button>Update title</button>
+      <button onClick={() => deleteMutation.mutate(post.id)}>Delete</button>
+      {deleteMutation.isError && (
+        <p style={{ color: "red" }}>Error deleteing the post</p>
+      )}
+      {deleteMutation.isLoading && <p style={{ color: "purple" }}>Loading..</p>}
+      {deleteMutation.isSuccess && (
+        <p style={{ color: "green" }}>Delete Success</p>
+      )}
+      <button onClick={() => updateMutation.mutate(post.id)}>
+        Update title
+      </button>
+
       <p>{post.body}</p>
       <h4>Comments</h4>
-      {data.map((comment) => (
-        <li key={comment.id}>
-          {comment.email}: {comment.body}
-        </li>
-      ))}
+      {!isLoading ? (
+        data.map((comment) => (
+          <li key={comment.id}>
+            {comment.email}: {comment.body}
+          </li>
+        ))
+      ) : (
+        <div> Loading ... </div>
+      )}
     </>
   );
 }
